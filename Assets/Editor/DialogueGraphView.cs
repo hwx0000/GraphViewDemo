@@ -9,8 +9,14 @@ public class DialogueGraphView: GraphView
 {
     public DialogueGraphView() 
     {
-        //// 允许拖拽Content
-        //this.AddManipulator(new ContentDragger());
+        // 不知道为啥没有起作用
+        StyleSheet s = Resources.Load<StyleSheet>("DialogueGraph");
+        styleSheets.Add(s);
+
+        // 允许对Graph进行Zoom in/out
+        SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
+        // 允许拖拽Content
+        this.AddManipulator(new ContentDragger());
         // 允许拖拽Selection里的内容
         this.AddManipulator(new SelectionDragger());
         // GraphView允许进行框选
