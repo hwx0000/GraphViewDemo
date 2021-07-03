@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 public class DialogueGraphWindow : EditorWindow
 {
     private DialogueGraphView _graphView;
+    private string _fileName = "New Narrative";
 
     [MenuItem("Graph/Open Dialogue Graph View")]
     public static void OpenGraphViewWindow() 
@@ -32,6 +33,20 @@ public class DialogueGraphWindow : EditorWindow
         //  相关内容涉及到菜单设置，所以应该放到DialogueGraphWindow类下
         // 这个Toolbar类在UnityEditor.UIElements下
         Toolbar toolbar = new Toolbar();
+
+        // 添加TextField
+        TextField fileNameTextField = new TextField(label: "File Name");
+        fileNameTextField.SetValueWithoutNotify(_fileName);// 类内私有成员_fileName = "New Narrative";
+        fileNameTextField.MarkDirtyRepaint();
+        fileNameTextField.RegisterValueChangedCallback(evt => _fileName = evt.newValue);
+        toolbar.Add(fileNameTextField);
+
+        // 添加两Button
+        // 不熟悉这种写法，text是Button的数据成员
+        // LodaData和SaveData两个函数暂时还没实现
+        toolbar.Add(new Button(() => GraphSaveUtility.SaveData()) { text = "Save Data" });
+        toolbar.Add(new Button(() => GraphSaveUtility.LoadData()) { text = "Load Data" });
+
         //创建lambda函数，代表点击按钮后发生的函数调用
         Button btn = new Button(clickEvent: () => { _graphView.AddDialogueNode("Dialogue"); });
         btn.text = "Add Dialogue Node";

@@ -9,9 +9,9 @@ public class DialogueGraphView: GraphView
 {
     public DialogueGraphView() 
     {
-        // 不知道为啥没有起作用
-        StyleSheet s = Resources.Load<StyleSheet>("DialogueGraph");
-        styleSheets.Add(s);
+        //// 不知道为啥没有起作用
+        //StyleSheet s = Resources.Load<StyleSheet>("DialogueGraph");
+        //styleSheets.Add(s);
 
         // 允许对Graph进行Zoom in/out
         SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
