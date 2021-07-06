@@ -44,8 +44,8 @@ public class DialogueGraphWindow : EditorWindow
         // 添加两Button
         // 不熟悉这种写法，text是Button的数据成员
         // LodaData和SaveData两个函数暂时还没实现
-        toolbar.Add(new Button(() => GraphSaveUtility.SaveData()) { text = "Save Data" });
-        toolbar.Add(new Button(() => GraphSaveUtility.LoadData()) { text = "Load Data" });
+        toolbar.Add(new Button(() => SaveData(fileNameTextField.text)) { text = "Save Data" });
+        toolbar.Add(new Button(() => LoadData(fileNameTextField.text)) { text = "Load Data" });
 
         //创建lambda函数，代表点击按钮后发生的函数调用
         Button btn = new Button(clickEvent: () => { _graphView.AddDialogueNode("Dialogue"); });
@@ -53,6 +53,29 @@ public class DialogueGraphWindow : EditorWindow
         toolbar.Add(btn);
         rootVisualElement.Add(toolbar);
     }
+
+    public void SaveData(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            EditorUtility.DisplayDialog("Wrong", "Null Save Path!", "OK");
+            return;
+        }
+        
+        GraphSaveUtility.GetInstance(_graphView).SaveData(path);
+    }
+
+    public void LoadData(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            EditorUtility.DisplayDialog("Wrong", "Null Save Path!", "OK");
+            return;
+        }
+
+        GraphSaveUtility.GetInstance(_graphView).LoadData(path);
+    }
+
     private void OnDisable()
     {
         rootVisualElement.Remove(_graphView);
