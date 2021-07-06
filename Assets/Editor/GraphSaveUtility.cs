@@ -13,6 +13,8 @@ public class GraphSaveUtility
     private List<Edge> edges => _dialogueGraphView.edges.ToList();
     private List<DialogueNode> nodes => _dialogueGraphView.nodes.ToList().Cast<DialogueNode>().ToList();
 
+    private DialogueContainer containerCache;
+
     public static GraphSaveUtility GetInstance(DialogueGraphView graphView)
     {
         return new GraphSaveUtility
@@ -47,10 +49,13 @@ public class GraphSaveUtility
             });
         }
 
+        // 应该所有的Edge都有Input吧（它毕竟是要两头的端点的）
+        // 不过ghost Edge(正在拉线连接的Edge)应该没有Input
         Debug.Log("Edges Dif: " +  (edges.Count - hasInputEdges.Length));
 
         // 获取所有不为Entry的Node, 这样的Node既有input，也有output
         DialogueNode[] regularNodes = nodes.Where(x => (!x.Entry)).ToArray();
+        // 注意, 存储的时候没有存储EntryPoint的Node, 只在NodeLinkData里存储过它的GUID
         for (int i = 0; i < regularNodes.Length; i++)
         {
             DialogueNode n = regularNodes[i];
@@ -69,6 +74,52 @@ public class GraphSaveUtility
 
     public void LoadData(string path)
     {
+        containerCache = AssetDatabase.LoadAssetAtPath<DialogueContainer>($"Assets/Resources/{path}.asset");
+        if (containerCache == null)
+        {
+            EditorUtility.DisplayDialog("Wrong", "Empty Path!", "OK");
+            Debug.Log($"Assets/Resources/{path}.asset");
+            
+            return;
+        }
+
+        // Clear Graph
+        // 读取的时候, EntryPoint对应的Node是不需要删除的, 只需要改它的GUID信息即可
+        var entryGUID = containerCache.nodeLinksData[0].baseNodeGuid;
+        DialogueNode oriEntryNode = nodes.Find(x => x.Entry);
+        oriEntryNode.GUID = entryGUID;
+
+        foreach (var item in nodes)
+        {
+            // 除了EntryNode, 可以认为一个Edge对应一个Node, 而且Edge的output.node对应一个Node
+            if (item.Entry) break;
+
+            // 先删除所有以item为ouypuy的Node的Edge
+            edges.Where(x => x.output.node == item).ToList()//List<Edge>
+                .ForEach(edge => _dialogueGraphView.RemoveElement(edge));
+
+            // 然后删除Node
+            _dialogueGraphView.RemoveElement(item);
+        }
+
+        // Create Nodes
+        for (int i = 0; i < containerCache.nodesData.Count; i++)
+        {
+            DialogueNode node = new DialogueNode()
+            {
+                GUID = containerCache.nodesData[i].nodeGuid,
+                Text = containerCache.nodesData[i].nodeText,
+            };
+
+            Vector2 pos = containerCache.nodesData[i].position;
+            Rect rect = node.GetPosition();
+            rect.x = pos.x; 
+            rect.y = pos.y;
+            node.SetPosition(rect);
+
+            _dialogueGraphView.AddElement(node);
+        }
+
 
     }
 

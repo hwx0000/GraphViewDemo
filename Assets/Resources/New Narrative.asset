@@ -13,28 +13,16 @@ MonoBehaviour:
   m_Name: New Narrative
   m_EditorClassIdentifier: 
   nodesData:
-  - nodeGuid: 7c23297d-6a0d-4872-ba7f-3ded11b9cc3b
+  - nodeGuid: 15144f6f-eeee-4df6-a1b0-29d59b6499e8
     nodeText: Dialogue
-    position: {x: 290, y: 250}
-  - nodeGuid: d8b595cd-8f60-4939-8833-f82e0f3df45b
+    position: {x: 753, y: 200}
+  - nodeGuid: 7bcddcfa-44a2-44c5-83db-3aef7abd50a6
     nodeText: Dialogue
-    position: {x: 561, y: 104}
-  - nodeGuid: 3c82410b-73b7-49c7-82b8-c3fa3f23c759
-    nodeText: Dialogue
-    position: {x: 561, y: 250}
-  - nodeGuid: 25ab1e6b-b116-4765-836c-3d7e8e331e3b
-    nodeText: Dialogue
-    position: {x: 547, y: 362}
+    position: {x: 298, y: 200}
   nodeLinksData:
   - baseNodeGuid: 73bf3547-b25b-4f02-82aa-1171ce5d26c4
     portName: Next
-    targetNodeGuid: 7c23297d-6a0d-4872-ba7f-3ded11b9cc3b
-  - baseNodeGuid: 7c23297d-6a0d-4872-ba7f-3ded11b9cc3b
+    targetNodeGuid: 7bcddcfa-44a2-44c5-83db-3aef7abd50a6
+  - baseNodeGuid: 7bcddcfa-44a2-44c5-83db-3aef7abd50a6
     portName: Output 0
-    targetNodeGuid: d8b595cd-8f60-4939-8833-f82e0f3df45b
-  - baseNodeGuid: 7c23297d-6a0d-4872-ba7f-3ded11b9cc3b
-    portName: Output 1
-    targetNodeGuid: 3c82410b-73b7-49c7-82b8-c3fa3f23c759
-  - baseNodeGuid: 7c23297d-6a0d-4872-ba7f-3ded11b9cc3b
-    portName: Output 2
-    targetNodeGuid: 25ab1e6b-b116-4765-836c-3d7e8e331e3b
+    targetNodeGuid: 15144f6f-eeee-4df6-a1b0-29d59b6499e8
