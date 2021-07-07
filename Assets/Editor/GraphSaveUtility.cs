@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,7 +91,42 @@ public class GraphSaveUtility
             return;
         }
 
-        // Clear Graph
+        ClearGraph();
+
+        // Create Nodes from NodesData and its ports from NodeLinksData
+        CreateNodes();
+    }
+
+    private void CreateNodes()
+    {
+        for (int i = 0; i < containerCache.nodesData.Count; i++)
+        {
+            DialogueNode node = new DialogueNode()
+            {
+                GUID = containerCache.nodesData[i].nodeGuid,
+                Text = containerCache.nodesData[i].nodeText,
+                title = containerCache.nodesData[i].nodeText
+            };
+
+            Vector2 pos = containerCache.nodesData[i].position;
+            Rect rect = node.GetPosition();
+            rect.x = pos.x;
+            rect.y = pos.y;
+            node.SetPosition(rect);
+
+            _dialogueGraphView.AddElement(node);
+
+            // 在NodeLinkData里寻找以此节点为BaseNode的Link的个数
+            int cnt = containerCache.nodeLinksData.Where(x =>
+            x.baseNodeGuid == containerCache.nodesData[i].nodeGuid).ToList().Count();
+
+            for (int k = 0; k < cnt; k++)
+                _dialogueGraphView.AddOutputPort(node);
+        }
+    }
+
+    private void ClearGraph()
+    {
         // 读取的时候, EntryPoint对应的Node是不需要删除的, 只需要改它的GUID信息即可
         var entryGUID = containerCache.nodeLinksData[0].baseNodeGuid;
         DialogueNode oriEntryNode = nodes.Find(x => x.Entry);
@@ -111,32 +147,5 @@ public class GraphSaveUtility
             // 然后删除Node
             _dialogueGraphView.RemoveElement(item);
         }
-
-        // Create Nodes
-        for (int i = 0; i < containerCache.nodesData.Count; i++)
-        {
-            DialogueNode node = new DialogueNode()
-            {
-                GUID = containerCache.nodesData[i].nodeGuid,
-                Text = containerCache.nodesData[i].nodeText,
-                title = containerCache.nodesData[i].nodeText
-            };
-
-            Vector2 pos = containerCache.nodesData[i].position;
-            Rect rect = node.GetPosition();
-            rect.x = pos.x; 
-            rect.y = pos.y;
-            node.SetPosition(rect);
-
-            _dialogueGraphView.AddElement(node);
-
-            // 在NodeLinkData里寻找以此节点为BaseNode的Link的个数
-            int cnt = containerCache.nodeLinksData.Where(x =>
-            x.baseNodeGuid == containerCache.nodesData[i].nodeGuid).ToList().Count();
-
-            for (int k = 0; k < cnt; k++)
-                DialogueGraphView.AddOutputPort(node);
-        }
     }
-
 }
