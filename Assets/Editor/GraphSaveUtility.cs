@@ -23,6 +23,12 @@ public class GraphSaveUtility
         };
     }
 
+    /// <summary>
+    /// 主要分为两步：
+    /// 1. 存储所有的Edge，这里的Edge都是带有Input和Ouput的
+    /// 2. 存储所有的Node，这里的Node不包含EntryNode
+    /// </summary>
+    /// <param name="filePath"></param>
     public void SaveData(string filePath)
     {
         if (!edges.Any())
@@ -31,6 +37,7 @@ public class GraphSaveUtility
         DialogueContainer container = ScriptableObject.CreateInstance<DialogueContainer>();
 
         // 遍历所有的Edge, 找到里面有Input的Edge, 组成一个数组
+        // 这里默认有个前提, 第一个Edge是连接EntryNode的Edge
         Edge[] hasInputEdges = edges.Where(x => x.input.node != null).ToArray();
         // 注意, edge的Input在右边, Output在左边
         for (int i = 0; i < hasInputEdges.Length; i++)
@@ -89,14 +96,17 @@ public class GraphSaveUtility
         DialogueNode oriEntryNode = nodes.Find(x => x.Entry);
         oriEntryNode.GUID = entryGUID;
 
+        // 遍历现在的GraphView里的Node节点, 除了EntryNode,其他的nodes和edges全部删除
         foreach (var item in nodes)
         {
-            // 除了EntryNode, 可以认为一个Edge对应一个Node, 而且Edge的output.node对应一个Node
-            if (item.Entry) break;
+            // 除了EntryNode, 可以认为一个Edge对应一个Node
+            // 因为每个Node都只有一个Input，也意味着Edge的output.node只对应一个Node
+            if (item.Entry) continue;
 
-            // 先删除所有以item为ouypuy的Node的Edge
-            edges.Where(x => x.output.node == item).ToList()//List<Edge>
-                .ForEach(edge => _dialogueGraphView.RemoveElement(edge));
+            // 先删除所有以item为output的Node的Edge, 为啥是list
+            List<Edge> es = edges.Where(x => x.output.node == item).ToList();//List<Edge>
+            es.ForEach(edge => _dialogueGraphView.RemoveElement(edge));
+            Debug.Log(es.Count());
 
             // 然后删除Node
             _dialogueGraphView.RemoveElement(item);
@@ -109,6 +119,7 @@ public class GraphSaveUtility
             {
                 GUID = containerCache.nodesData[i].nodeGuid,
                 Text = containerCache.nodesData[i].nodeText,
+                title = containerCache.nodesData[i].nodeText
             };
 
             Vector2 pos = containerCache.nodesData[i].position;
@@ -118,9 +129,14 @@ public class GraphSaveUtility
             node.SetPosition(rect);
 
             _dialogueGraphView.AddElement(node);
+
+            // 在NodeLinkData里寻找以此节点为BaseNode的Link的个数
+            int cnt = containerCache.nodeLinksData.Where(x =>
+            x.baseNodeGuid == containerCache.nodesData[i].nodeGuid).ToList().Count();
+
+            for (int k = 0; k < cnt; k++)
+                DialogueGraphView.AddOutputPort(node);
         }
-
-
     }
 
 }

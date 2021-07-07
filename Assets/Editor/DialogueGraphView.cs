@@ -52,7 +52,7 @@ public class DialogueGraphView: GraphView
 
     // 为节点n创建input port或者output port
     // Direction: 是一个简单的枚举，分为Input和Output两种
-    private Port GenPortForNode(Node n, Direction portDir, Port.Capacity capacity = Port.Capacity.Single) 
+    private static Port GenPortForNode(Node n, Direction portDir, Port.Capacity capacity = Port.Capacity.Single) 
     {
         // Orientation也是个简单的枚举，分为Horizontal和Vertical两种
         return n.InstantiatePort(Orientation.Horizontal, portDir, capacity, typeof(float));
@@ -88,7 +88,7 @@ public class DialogueGraphView: GraphView
         AddElement(node);
     }
     
-    private void AddOutputPort(DialogueNode node)
+    public static void AddOutputPort(DialogueNode node)
     {
         var outPort = GenPortForNode(node, Direction.Output);
 
